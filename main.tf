@@ -172,3 +172,30 @@ module "rds" {
 /*****************************************************************
                             S3
 *****************************************************************/
+/*
+module "s3" {
+  source = "./modules/s3"
+
+  providers = {
+    aws = aws.east
+  }
+
+  primary_bucket_name   = "my-primary-bucket"
+  secondary_bucket_name = "my-secondary-bucket"
+}
+
+module "s3_replication" {
+  source = "./modules/s3_replication"
+
+  providers = {
+    aws = aws.west
+  }
+
+  primary_bucket_id   = module.s3.primary_bucket_id
+  primary_bucket_arn  = module.s3.primary_bucket_arn
+  secondary_bucket_arn = module.s3.secondary_bucket_arn
+}
+*/
+/*****************************************************************
+                          END- S3
+*****************************************************************/
