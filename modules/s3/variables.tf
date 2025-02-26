@@ -1,12 +1,12 @@
 # modules/s3/variables.tf
 
-variable "primary_bucket_name" {
-  description = "Name of the primary S3 bucket"
+variable "source_bucket_name" {
+  description = "Name of the source S3 bucket"
   type        = string
 }
 
-variable "secondary_bucket_name" {
-  description = "Name of the secondary S3 bucket"
+variable "destination_bucket_name" {
+  description = "Name of the destination S3 bucket"
   type        = string
 }
 

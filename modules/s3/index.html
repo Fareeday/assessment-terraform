@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 4rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        h1:hover {
+            transform: scale(1.1);
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello World! From CloudFront!</h1>
+    </div>
+
+    <script>
+        document.body.addEventListener('mousemove', function(event) {
+            // Calculate the position of the mouse relative to the window size
+            let x = event.clientX / window.innerWidth;
+            let y = event.clientY / window.innerHeight;
+
+            // Create a dynamic background color based on mouse position
+            let red = Math.round(x * 255);
+            let green = Math.round(y * 255);
+            let blue = 150;
+
+            document.body.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+        });
+    </script>
+</body>
+</html>
+

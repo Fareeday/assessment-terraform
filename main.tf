@@ -180,22 +180,22 @@ module "s3" {
     aws = aws.east
   }
 
-  primary_bucket_name   = "my-primary-bucket"
-  secondary_bucket_name = "my-secondary-bucket"
+  source_bucket_name   = "my-s0urc3-buck3t"
+  destination_bucket_name = "my-d3st1nat1on-buck3t"
 }
 
 module "s3_replication" {
   source = "./modules/s3_replication"
 
   providers = {
-    aws = aws.west
+    aws = aws.east
   }
 
-  primary_bucket_id   = module.s3.primary_bucket_id
-  primary_bucket_arn  = module.s3.primary_bucket_arn
-  secondary_bucket_arn = module.s3.secondary_bucket_arn
+  source_bucket_id   = module.s3.source_bucket_id
+  source_bucket_arn  = module.s3.source_bucket_arn
+  destination_bucket_arn = module.s3.destination_bucket_arn
 }
-*/
+
 /*****************************************************************
                           END- S3
 *****************************************************************/

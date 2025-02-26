@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-provider "aws" {
+/*provider "aws" {
   region  = "us-east-1"
   alias   = "us_east_1"
   profile = "sameer"
@@ -17,5 +17,5 @@ provider "aws" {
   region  = "us-west-2"
   alias   = "us_west_2"
   profile = "sameer"
-}
+}*/
 
