@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "source" {
   }
 }
 
-resource "aws_s3_bucket" "destination" {
+/*resource "aws_s3_bucket" "destination" {
   #provider = aws.destination_region
   bucket   = var.destination_bucket_name
   force_destroy = true
@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "destination" {
   tags = {
     Name = "destination S3 Bucket"
   }
-}
+}*/
 
 # Enable versioning for replication
 resource "aws_s3_bucket_versioning" "source" {
@@ -27,13 +27,13 @@ resource "aws_s3_bucket_versioning" "source" {
   }
 }
 
-resource "aws_s3_bucket_versioning" "destination" {
+/*resource "aws_s3_bucket_versioning" "destination" {
   #provider = aws.destination_region
   bucket   = aws_s3_bucket.destination.id
   versioning_configuration {
     status = "Enabled"
   }
-}
+}*/
 
 resource "aws_s3_bucket_ownership_controls" "ownership_controls" {
   bucket  = var.source_bucket_name

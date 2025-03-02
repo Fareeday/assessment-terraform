@@ -73,6 +73,8 @@ module "security_group_east" {
   vpc_id = module.vpc_east.vpc_id
 }
 
+# Security Group For US-WEST-2
+
 module "security_group_west" {
   source = "./modules/security_group"
 
@@ -84,7 +86,6 @@ module "security_group_west" {
   vpc_id = module.vpc_west.vpc_id
 }
 
-# Security Group For US-WEST-2
 
 /*****************************************************************
                     END-SECURITY-GROUP
@@ -92,7 +93,7 @@ module "security_group_west" {
 /*****************************************************************
                              ALB
 *****************************************************************/
-module "alb" {
+module "alb-east" {
   source = "./modules/alb"
 
   providers = {
@@ -113,7 +114,7 @@ module "alb" {
                         ECS-CLUSTER
 *****************************************************************/
 
-module "ecs_cluster" {
+module "ecs_cluster-east" {
   source = "./modules/ecs_cluster"
 
   providers = {
@@ -132,7 +133,7 @@ module "ecs_cluster" {
                         ECS-SERVICE
 *****************************************************************/
 
-module "ecs_service" {
+module "ecs_service-east" {
   source = "./modules/ecs_service"
 
   providers = {
@@ -140,15 +141,15 @@ module "ecs_service" {
   }
 
   service_name      = "${var.service_name}-ecs-svc"
-  cluster_name      = module.ecs_cluster.ecs_cluster_name
-  task_definition   = module.ecs_cluster.ecs_task_definition_arn
+  cluster_name      = module.ecs_cluster-east.ecs_cluster_name
+  task_definition   = module.ecs_cluster-east.ecs_task_definition_arn
   subnets           = module.vpc_east.public_subnet_ids
   security_group_id = module.security_group_east.ecs_security_group_id
   container_name    = var.container_name
   container_port    = var.container_port
-  target_group_arn  = module.alb.target_group_arn
+  target_group_arn  = module.alb-east.target_group_arn
 
-  depends_on        = [module.alb]
+  depends_on        = [module.alb-east]
 }
 
 /*****************************************************************
@@ -158,7 +159,7 @@ module "ecs_service" {
 /*****************************************************************
                           RDS
 *****************************************************************/
-module "rds" {
+/*module "rds" {
   source = "./modules/rds"
 
   providers = {
@@ -172,8 +173,8 @@ module "rds" {
 /*****************************************************************
                             S3
 *****************************************************************/
-/*
-module "s3" {
+
+/*module "s3-east-1" {
   source = "./modules/s3"
 
   providers = {
@@ -181,10 +182,22 @@ module "s3" {
   }
 
   source_bucket_name   = "my-s0urc3-buck3t"
+  #destination_bucket_name = "my-d3st1nat1on-buck3t"
+}
+
+
+module "s3-west-2" {
+  source = "./modules/s3"
+
+  providers = {
+    aws = aws.west
+  }
+
+  #source_bucket_name   = "my-s0urc3-buck3t"
   destination_bucket_name = "my-d3st1nat1on-buck3t"
 }
 
-module "s3_replication" {
+/*module "s3_replication" {
   source = "./modules/s3_replication"
 
   providers = {
