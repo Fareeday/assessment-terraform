@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "nginx" {
   cpu                      = "256"
   memory                   = "512"
 
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn = var.iam_role_arn
 
   container_definitions = jsonencode([
     {
@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "nginx" {
   ])
 }
 
-resource "aws_iam_role" "ecs_task_execution_role" {
+/*resource "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 
   assume_role_policy = jsonencode({
@@ -48,5 +48,5 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
+}*/
 

@@ -12,3 +12,8 @@ variable "image_name"  {
   description = "Name of The ECS Cluster"
   type        = string
 }
+
+variable  "iam_role_arn"  {
+  description = "IAM Role ARN for ECS Task Execution"
+  type        = string
+}

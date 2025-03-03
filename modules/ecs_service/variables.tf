@@ -1,17 +1,11 @@
-variable "cluster_name" {
-  description = "The name of the ECS cluster"
-  type        = string
-}
-
 variable "service_name" {
   description = "The name of the ECS Service"
   type        = string
   default     = "nginx-service"
 }
 
-
-variable "security_group_id" {
-  description = "The security group ID for the ECS service"
+variable "cluster_name" {
+  description = "The name of the ECS cluster"
   type        = string
 }
 
@@ -25,6 +19,16 @@ variable "subnets" {
   type        = list(string)
 }
 
+variable "security_group_id" {
+  description = "The security group ID for the ECS service"
+  type        = string
+}
+
+variable "target_group_arn" {
+  description = "Target Group ARN"
+  type        = string
+}
+
 variable "container_name" {
   description = "The name of the Container"
   type        = string
@@ -34,10 +38,4 @@ variable "container_port" {
   description = "Container Port"
   type        = string
 }
-
-variable "target_group_arn" {
-  description = "Target Group ARN"
-  type        = string
-}
-
 

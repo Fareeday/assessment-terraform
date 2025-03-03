@@ -85,14 +85,27 @@ module "security_group_west" {
   env    = "dev"
   vpc_id = module.vpc_west.vpc_id
 }
-
-
 /*****************************************************************
                     END-SECURITY-GROUP
 *****************************************************************/
 /*****************************************************************
+                    IAM-ROLE
+*****************************************************************/
+module "iam" {
+  source = "./modules/iam"
+
+  providers = {
+    aws = aws.east
+  }
+}
+
+/*****************************************************************
+                    END-IAM-ROLE
+*****************************************************************/
+/*****************************************************************
                              ALB
 *****************************************************************/
+#ALB FOR US-EAST
 module "alb-east" {
   source = "./modules/alb"
 
@@ -107,13 +120,27 @@ module "alb-east" {
   security_group_id   = module.security_group_east.alb_security_group_id
 }
 
+#ALB FOR US-WEST
+module "alb-west" {
+  source = "./modules/alb"
+
+  providers = {
+    aws = aws.west
+  }
+
+  alb_name            = "${var.alb_name}-alb"
+  target_port         = var.target_port
+  vpc_id              = module.vpc_west.vpc_id
+  subnets             = module.vpc_west.public_subnet_ids
+  security_group_id   = module.security_group_west.alb_security_group_id
+}
 /*****************************************************************
                           END-ALB
 *****************************************************************/
 /*****************************************************************
                         ECS-CLUSTER
 *****************************************************************/
-
+# ECS CLUSTER FOR US-EAST
 module "ecs_cluster-east" {
   source = "./modules/ecs_cluster"
 
@@ -124,6 +151,21 @@ module "ecs_cluster-east" {
   cluster_name       = "${var.cluster_name}_nginx-cluster"
   container_name     = var.container_name
   image_name         = var.image_name
+  iam_role_arn       = module.iam.iam_role_arn
+}
+
+# ECS CLUSTER FOR US-WEST
+module "ecs_cluster-west" {
+  source = "./modules/ecs_cluster"
+
+  providers = {
+    aws = aws.west
+  }
+
+  cluster_name       = "${var.cluster_name}_nginx-cluster"
+  container_name     = var.container_name
+  image_name         = var.image_name
+  iam_role_arn       = module.iam.iam_role_arn
 }
 
 /*****************************************************************
@@ -132,7 +174,7 @@ module "ecs_cluster-east" {
 /*****************************************************************
                         ECS-SERVICE
 *****************************************************************/
-
+#ECS SERVICE FOR US-EAST
 module "ecs_service-east" {
   source = "./modules/ecs_service"
 
@@ -148,8 +190,30 @@ module "ecs_service-east" {
   container_name    = var.container_name
   container_port    = var.container_port
   target_group_arn  = module.alb-east.target_group_arn
+  #iam_role_name     = module.iam.ecs_task_execution_role_name
 
   depends_on        = [module.alb-east]
+}
+
+#ECS SERVICE FOR US-WEST
+module "ecs_service-wast" {
+  source = "./modules/ecs_service"
+
+  providers = {
+    aws = aws.west
+  }
+
+  service_name      = "${var.service_name}-ecs-svc"
+  cluster_name      = module.ecs_cluster-west.ecs_cluster_name
+  task_definition   = module.ecs_cluster-west.ecs_task_definition_arn
+  subnets           = module.vpc_west.public_subnet_ids
+  security_group_id = module.security_group_west.ecs_security_group_id
+  container_name    = var.container_name
+  container_port    = var.container_port
+  target_group_arn  = module.alb-west.target_group_arn
+  #iam_role_name     = module.iam.ecs_task_execution_role_name
+  
+  depends_on        = [module.alb-west]
 }
 
 /*****************************************************************
