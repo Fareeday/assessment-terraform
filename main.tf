@@ -1,14 +1,14 @@
 # This is ROOT main.tf
 # Define AWS Providers for Two Regions
 provider "aws" {
-  alias  = "east"
-  region = "us-east-1"
+  alias   = "east"
+  region  = "us-east-1"
   profile = "sameer"
 }
 
 provider "aws" {
-  alias  = "west"
-  region = "us-west-2"
+  alias   = "west"
+  region  = "us-west-2"
   profile = "sameer"
 }
 
@@ -23,8 +23,8 @@ module "vpc_east" {
     aws = aws.east
   }
 
-  vpc_name      = "vpc-east"
-  cidr_block    = "10.0.0.0/16"
+  vpc_name   = "vpc-east"
+  cidr_block = "10.0.0.0/16"
   public_subnets = [
     { cidr = "10.0.1.0/24", az = "us-east-1a", name = "public-subnet-1a" },
     { cidr = "10.0.2.0/24", az = "us-east-1b", name = "public-subnet-1b" }
@@ -43,8 +43,8 @@ module "vpc_west" {
     aws = aws.west
   }
 
-  vpc_name      = "vpc-west"
-  cidr_block    = "10.1.0.0/16"
+  vpc_name   = "vpc-west"
+  cidr_block = "10.1.0.0/16"
   public_subnets = [
     { cidr = "10.1.1.0/24", az = "us-west-2a", name = "public-subnet-2a" },
     { cidr = "10.1.2.0/24", az = "us-west-2b", name = "public-subnet-2b" }
@@ -113,11 +113,11 @@ module "alb-east" {
     aws = aws.east
   }
 
-  alb_name            = "${var.alb_name}-alb"
-  target_port         = var.target_port
-  vpc_id              = module.vpc_east.vpc_id
-  subnets             = module.vpc_east.public_subnet_ids
-  security_group_id   = module.security_group_east.alb_security_group_id
+  alb_name          = "${var.alb_name}-alb"
+  target_port       = var.target_port
+  vpc_id            = module.vpc_east.vpc_id
+  subnets           = module.vpc_east.public_subnet_ids
+  security_group_id = module.security_group_east.alb_security_group_id
 }
 
 #ALB FOR US-WEST
@@ -128,11 +128,11 @@ module "alb-west" {
     aws = aws.west
   }
 
-  alb_name            = "${var.alb_name}-alb"
-  target_port         = var.target_port
-  vpc_id              = module.vpc_west.vpc_id
-  subnets             = module.vpc_west.public_subnet_ids
-  security_group_id   = module.security_group_west.alb_security_group_id
+  alb_name          = "${var.alb_name}-alb"
+  target_port       = var.target_port
+  vpc_id            = module.vpc_west.vpc_id
+  subnets           = module.vpc_west.public_subnet_ids
+  security_group_id = module.security_group_west.alb_security_group_id
 }
 /*****************************************************************
                           END-ALB
@@ -148,10 +148,10 @@ module "ecs_cluster-east" {
     aws = aws.east
   }
 
-  cluster_name       = "${var.cluster_name}_nginx-cluster"
-  container_name     = var.container_name
-  image_name         = var.image_name
-  iam_role_arn       = module.iam.iam_role_arn
+  cluster_name   = "${var.cluster_name}_nginx-cluster"
+  container_name = var.container_name
+  image_name     = var.image_name
+  iam_role_arn   = module.iam.iam_role_arn
 }
 
 # ECS CLUSTER FOR US-WEST
@@ -162,10 +162,10 @@ module "ecs_cluster-west" {
     aws = aws.west
   }
 
-  cluster_name       = "${var.cluster_name}_nginx-cluster"
-  container_name     = var.container_name
-  image_name         = var.image_name
-  iam_role_arn       = module.iam.iam_role_arn
+  cluster_name   = "${var.cluster_name}_nginx-cluster"
+  container_name = var.container_name
+  image_name     = var.image_name
+  iam_role_arn   = module.iam.iam_role_arn
 }
 
 /*****************************************************************
@@ -192,7 +192,7 @@ module "ecs_service-east" {
   target_group_arn  = module.alb-east.target_group_arn
   #iam_role_name     = module.iam.ecs_task_execution_role_name
 
-  depends_on        = [module.alb-east]
+  depends_on = [module.alb-east]
 }
 
 #ECS SERVICE FOR US-WEST
@@ -212,8 +212,8 @@ module "ecs_service-wast" {
   container_port    = var.container_port
   target_group_arn  = module.alb-west.target_group_arn
   #iam_role_name     = module.iam.ecs_task_execution_role_name
-  
-  depends_on        = [module.alb-west]
+
+  depends_on = [module.alb-west]
 }
 
 /*****************************************************************
