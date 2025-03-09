@@ -1,18 +1,9 @@
 # modules/s3/outputs.tf
 
-output "source_bucket_arn" {
-  value = aws_s3_bucket.source.arn
+output "bucket_arn" {
+  value = aws_s3_bucket.this.arn
 }
 
-output "source_bucket_id" {
-  value = aws_s3_bucket.source.id
+output "bucket_name" {
+  value = aws_s3_bucket.this.id
 }
-
-output "destination_bucket_arn" {
-  value = aws_s3_bucket.destination.arn
-}
-
-output "destination_bucket_id" {
-  value = aws_s3_bucket.destination.id
-}
-

@@ -97,6 +97,9 @@ module "iam" {
   providers = {
     aws = aws.east
   }
+
+  source_bucket       = "my-s0urc3-buck3t"
+  destination_bucket  = "my-d3st1nat1on-buck3t"
 }
 
 /*****************************************************************
@@ -151,7 +154,8 @@ module "ecs_cluster-east" {
   cluster_name   = "${var.cluster_name}_nginx-cluster"
   container_name = var.container_name
   image_name     = var.image_name
-  iam_role_arn   = module.iam.iam_role_arn
+  #iam_role_arn   = module.iam.iam_role_arn
+  iam_role_arn = module.iam.ecs_task_execution_role_arn
 }
 
 # ECS CLUSTER FOR US-WEST
@@ -165,7 +169,8 @@ module "ecs_cluster-west" {
   cluster_name   = "${var.cluster_name}_nginx-cluster"
   container_name = var.container_name
   image_name     = var.image_name
-  iam_role_arn   = module.iam.iam_role_arn
+  #iam_role_arn   = module.iam.iam_role_arn
+  iam_role_arn = module.iam.ecs_task_execution_role_arn
 }
 
 /*****************************************************************
@@ -238,40 +243,45 @@ module "ecs_service-wast" {
                             S3
 *****************************************************************/
 
-/*module "s3-east-1" {
+# S3 Source Bucket in us-east-1
+module "s3_source" {
   source = "./modules/s3"
-
+  
   providers = {
     aws = aws.east
   }
 
-  source_bucket_name   = "my-s0urc3-buck3t"
-  #destination_bucket_name = "my-d3st1nat1on-buck3t"
+  bucket_name  = "my-s0urc3-buck3t"
+  iam_role_arn = module.iam.iam_role_arn
 }
 
-
-module "s3-west-2" {
+# S3 Destination Bucket in us-west-2
+module "s3_destination" {
   source = "./modules/s3"
-
+  
   providers = {
     aws = aws.west
   }
 
-  #source_bucket_name   = "my-s0urc3-buck3t"
-  destination_bucket_name = "my-d3st1nat1on-buck3t"
+  bucket_name  = "my-d3st1nat1on-buck3t"
+  iam_role_arn = module.iam.iam_role_arn
 }
 
-/*module "s3_replication" {
+# Replication Configuration (Only applied to the source bucket)
+module "s3_replication" {
   source = "./modules/s3_replication"
-
+  
   providers = {
     aws = aws.east
   }
 
-  source_bucket_id   = module.s3.source_bucket_id
-  source_bucket_arn  = module.s3.source_bucket_arn
-  destination_bucket_arn = module.s3.destination_bucket_arn
+  source_bucket                   = module.s3_source.bucket_name
+  destination_bucket_arn          = module.s3_destination.bucket_arn
+  iam_role_arn                    = module.iam.iam_role_arn
+  source_bucket_depends_on        = module.s3_source
+  destination_bucket_depends_on   = module.s3_destination
 }
+
 
 /*****************************************************************
                           END- S3
