@@ -201,7 +201,7 @@ module "ecs_service-east" {
 }
 
 #ECS SERVICE FOR US-WEST
-module "ecs_service-wast" {
+module "ecs_service-west" {
   source = "./modules/ecs_service"
 
   providers = {
