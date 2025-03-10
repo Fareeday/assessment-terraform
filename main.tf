@@ -314,12 +314,35 @@ module "s3_replication" {
 
 
 /*****************************************************************
-                          END- S3
+                          END - S3
 *****************************************************************/
 
+/*****************************************************************
+                         CloudFront
+*****************************************************************/
 module "cloudfront" {
   source = "./modules/cloudfront"
 
   source_bucket_regional_domain_name      = module.s3_source.bucket_regional_domain_name
   destination_bucket_regional_domain_name = module.s3_destination.bucket_regional_domain_name
 }
+
+
+/*****************************************************************
+                    END - CloudFront
+*****************************************************************/
+
+/*****************************************************************
+                         Route53
+*****************************************************************/
+/*module "route53_failover" {
+  source = "./modules/route53_failover"
+
+  hosted_zone_id       = var.hosted_zone_id
+  domain_name          = "example.com"
+  primary_alb_dns      = module.alb-east.alb_dns_name
+  primary_alb_zone_id  = module.alb-east.alb_zone_id
+  secondary_alb_dns    = module.alb-west.alb_dns_name
+  secondary_alb_zone_id = module.alb-west.alb_zone_id
+}
+*/

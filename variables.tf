@@ -41,3 +41,9 @@ variable "image_name" {
   type        = string
   default     = "nginx:latest"
 }
+
+variable "hosted_zone_id" {
+  type        = string
+  description = "The Route 53 hosted zone ID"
+}
+
