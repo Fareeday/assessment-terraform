@@ -98,8 +98,8 @@ module "iam" {
     aws = aws.east
   }
 
-  source_bucket       = "my-s0urc3-buck3t"
-  destination_bucket  = "my-d3st1nat1on-buck3t"
+  source_bucket      = "my-s0urc3-buck3t"
+  destination_bucket = "my-d3st1nat1on-buck3t"
 }
 
 /*****************************************************************
@@ -228,12 +228,42 @@ module "ecs_service-wast" {
 /*****************************************************************
                           RDS
 *****************************************************************/
-/*module "rds" {
+module "rds_east" {
   source = "./modules/rds"
 
   providers = {
     aws = aws.east
   }
+
+  db_instance_identifier = "rds-east"
+  db_engine              = "mysql"
+  db_engine_version      = "8.0"
+  db_instance_class      = "db.t3.micro"
+  allocated_storage      = 20
+  db_username            = "admin"
+  db_password            = "MySecurePassword123!"
+  subnets                = module.vpc_east.private_subnet_ids
+  security_group_id      = module.security_group_east.rds_security_group_id
+  multi_az               = true
+}
+
+module "rds_west" {
+  source = "./modules/rds"
+
+  providers = {
+    aws = aws.west
+  }
+
+  db_instance_identifier = "rds-west"
+  db_engine              = "mysql"
+  db_engine_version      = "8.0"
+  db_instance_class      = "db.t3.micro"
+  allocated_storage      = 20
+  db_username            = "admin"
+  db_password            = "MySecurePassword123!"
+  subnets                = module.vpc_west.private_subnet_ids
+  security_group_id      = module.security_group_west.rds_security_group_id
+  multi_az               = true
 }
 
 /*****************************************************************
@@ -246,7 +276,7 @@ module "ecs_service-wast" {
 # S3 Source Bucket in us-east-1
 module "s3_source" {
   source = "./modules/s3"
-  
+
   providers = {
     aws = aws.east
   }
@@ -258,7 +288,7 @@ module "s3_source" {
 # S3 Destination Bucket in us-west-2
 module "s3_destination" {
   source = "./modules/s3"
-  
+
   providers = {
     aws = aws.west
   }
@@ -270,19 +300,26 @@ module "s3_destination" {
 # Replication Configuration (Only applied to the source bucket)
 module "s3_replication" {
   source = "./modules/s3_replication"
-  
+
   providers = {
     aws = aws.east
   }
 
-  source_bucket                   = module.s3_source.bucket_name
-  destination_bucket_arn          = module.s3_destination.bucket_arn
-  iam_role_arn                    = module.iam.iam_role_arn
-  source_bucket_depends_on        = module.s3_source
-  destination_bucket_depends_on   = module.s3_destination
+  source_bucket                 = module.s3_source.bucket_name
+  destination_bucket_arn        = module.s3_destination.bucket_arn
+  iam_role_arn                  = module.iam.iam_role_arn
+  source_bucket_depends_on      = module.s3_source
+  destination_bucket_depends_on = module.s3_destination
 }
 
 
 /*****************************************************************
                           END- S3
 *****************************************************************/
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  source_bucket_regional_domain_name      = module.s3_source.bucket_regional_domain_name
+  destination_bucket_regional_domain_name = module.s3_destination.bucket_regional_domain_name
+}

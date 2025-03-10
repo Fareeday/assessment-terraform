@@ -78,3 +78,37 @@ resource "aws_iam_role_policy_attachment" "replication_attachment" {
   role       = aws_iam_role.s3_replication_role.name
   policy_arn = aws_iam_policy.s3_replication_policy.arn
 }
+
+resource "aws_iam_policy" "s3_admin_policy" {
+  name        = "S3AdminPolicy"
+  description = "Allows full access to manage S3 bucket policies"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "s3:PutBucketPolicy",
+          "s3:GetBucketPolicy",
+          "s3:DeleteBucketPolicy",
+          "s3:ListBucket",
+          "s3:PutObject",
+          "s3:GetObject"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-s0urc3-buck3t",
+          "arn:aws:s3:::my-s0urc3-buck3t/*",
+          "arn:aws:s3:::my-d3st1nat1on-buck3t",
+          "arn:aws:s3:::my-d3st1nat1on-buck3t/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "s3_admin_attach" {
+  role       = aws_iam_role.s3_replication_role.name
+  policy_arn = aws_iam_policy.s3_admin_policy.arn
+}
+
