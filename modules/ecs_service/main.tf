@@ -4,7 +4,7 @@ resource "aws_ecs_service" "this" {
   name            = var.service_name
   cluster         = var.cluster_name
   task_definition = var.task_definition
-  desired_count   = 1
+  desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
