@@ -96,3 +96,4 @@ Preview:
 Note: * Route53 (Routing Failover Policy) is commented in main.tf Because we need Host Zone ID, for this we need DNS Name.
 * We Added VPC Peering for cross region RDS MySQL Group Replication, Yes We Can Use AWS Aurora But Having Challenges So I Decided To Move With RDS.
 * There is graph.png and diagram file in repo for understanding flow. You can also check diagram using above URL.
+* You need to change/Remove AWS profile in main.tf for deployment
